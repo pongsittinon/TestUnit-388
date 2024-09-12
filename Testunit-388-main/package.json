@@ -1,0 +1,51 @@
+{
+  "name": "quasar-project-1",
+  "version": "0.0.1",
+  "description": "A Quasar Project",
+  "productName": "Quasar App",
+  "author": "ven <ktkwenw@gmail.com>",
+  "private": true,
+  "scripts": {
+    "test": "echo \"See package.json => scripts for available tests.\" && exit 0",
+    "dev": "quasar dev",
+    "build": "quasar build",
+    "test:unit:ui": "majestic",
+    "test:unit": "jest",
+    "test:unit:ci": "jest --ci",
+    "test:unit:coverage": "jest --coverage",
+    "test:unit:watch": "jest --watch",
+    "test:unit:watchAll": "jest --watchAll"
+  },
+  "dependencies": {
+    "@quasar/extras": "^1.16.4",
+    "axios": "^1.2.1",
+    "core-js": "^3.31.1",
+    "quasar": "^2.16.0",
+    "vue": "^3.4.18",
+    "vue-router": "^4.0.12",
+    "vuex": "^4.0.1"
+  },
+  "devDependencies": {
+    "@quasar/app-webpack": "^3.13.4",
+    "@quasar/quasar-app-extension-testing-unit-jest": "^3.0.2",
+    "@vue/test-utils": "^2.4.6",
+    "jest": "^29.7.0",
+    "eslint-plugin-jest": "^28.6.0"
+  },
+  "browserslist": [
+    "last 10 Chrome versions",
+    "last 10 Firefox versions",
+    "last 4 Edge versions",
+    "last 7 Safari versions",
+    "last 8 Android versions",
+    "last 8 ChromeAndroid versions",
+    "last 8 FirefoxAndroid versions",
+    "last 10 iOS versions",
+    "last 5 Opera versions"
+  ],
+  "engines": {
+    "node": "^20 || ^18 || ^16",
+    "npm": ">= 6.13.4",
+    "yarn": ">= 1.21.1"
+  }
+}
