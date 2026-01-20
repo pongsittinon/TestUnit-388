@@ -2,17 +2,18 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
-require('dotenv').config(); // เรียกใช้งาน config จาก .env
+require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 3000; // กำหนด Port 3000 ตามมาตรฐานบทเรียน
+const PORT = process.env.PORT || 3000;
 
 // --- Middleware ---
-app.use(cors()); // อนุญาตให้ Frontend เข้าถึง API ได้
+app.use(cors());
 app.use(express.json());
-app.use(express.static(__dirname)); // ส่งไฟล์ HTML (longan_map.html) ออกไปแสดงผล
+// ทำให้เปิดหน้าเว็บ http://localhost:3000/longan_map.html ได้
+app.use(express.static(__dirname));
 
-// สร้างโฟลเดอร์ logs อัตโนมัติสำหรับเก็บข้อมูล log
+// สร้างโฟลเดอร์ logs อัตโนมัติ (สำหรับ Docker Volume)
 const logsDir = path.join(__dirname, 'logs');
 if (!fs.existsSync(logsDir)) {
     fs.mkdirSync(logsDir);
@@ -20,7 +21,7 @@ if (!fs.existsSync(logsDir)) {
 
 // --- API Endpoints ---
 
-// 1. Endpoint ข้อมูลผู้พัฒนา (แก้ไขเป็นชื่อและรหัสของคุณแล้ว)
+// 1. ส่งชื่อและรหัสของคุณ (สิธินนท์ 6604101388)
 app.get('/api/user', (req, res) => {
     res.json({
         name: "สิธินนท์",
@@ -28,30 +29,17 @@ app.get('/api/user', (req, res) => {
     });
 });
 
-// 2. Endpoint ข้อมูล Demo และการบันทึก Log ตามเอกสาร
+// 2. ข้อมูลระบบตามเอกสารหน้า 3 และบันทึก Log
 app.get('/api/demo', (req, res) => {
-    // บันทึก Request ลงใน logs/access.log
-    const logMessage = `Request at ${new Date().toISOString()}: ${req.ip}\n`;
-    fs.appendFileSync(path.join(logsDir, 'access.log'), logMessage);
+    const logEntry = `[${new Date().toISOString()}] Access API Demo\n`;
+    fs.appendFileSync(path.join(logsDir, 'access.log'), logEntry);
 
     res.json({
-        git: {
-            title: 'Advanced Git Workflow',
-            detail: 'ใช้ branch protection บน GitHub และ code review ใน PR'
-        },
-        docker: {
-            title: 'Advanced Docker',
-            detail: 'ใช้ multi-stage build, healthcheck และ Docker Compose'
-        }
+        git: { title: 'Advanced Git Workflow', detail: 'Branch Protection & PR' },
+        docker: { title: 'Advanced Docker', detail: 'Multi-stage & Healthcheck' }
     });
 });
 
-// จัดการ Error พื้นฐาน
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something broke!');
-});
-
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`); // แจ้งสถานะการรัน server
+    console.log(`Server is running at http://localhost:${PORT}`);
 });

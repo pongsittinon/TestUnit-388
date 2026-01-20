@@ -1,77 +1,62 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Longan Price Map - Lab 1.2 (Integrated)</title>
+    <title>Longan Map - สิธินนท์ 6604101388</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
-        #map { height: 600px; width: 100%; border-radius: 0.5rem; }
-        .custom-label {
-            background-color: #15803d; color: white; border: none;
-            border-radius: 4px; padding: 4px 8px; font-weight: bold;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
+        #map { height: 550px; width: 100%; border-radius: 12px; }
+        .custom-label { background: #15803d; color: white; padding: 5px 10px; border-radius: 4px; font-weight: bold; }
     </style>
 </head>
-
-<body class="bg-gray-100 font-sans">
-    <div class="container mx-auto p-4 lg:p-8">
-        <header class="mb-8 text-center">
-            <h1 class="text-3xl font-bold text-green-700">ระบบติดตามราคาสินค้าเกษตร (ลำไย)</h1>
-            <p id="developer-info" class="text-lg font-medium text-gray-700 mt-2 italic">
-                กำลังดึงข้อมูลสถานะจาก Backend...
-            </p>
+<body class="bg-gray-50">
+    <div class="container mx-auto p-6">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-extrabold text-green-800">ระบบติดตามราคาสินค้าเกษตร</h1>
+            <div id="dev-tag" class="mt-4 inline-block bg-white px-6 py-2 rounded-full shadow-sm border border-green-200">
+                <span class="text-gray-600 italic">กำลังโหลดข้อมูลผู้พัฒนา...</span>
+            </div>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200">
-                <h2 class="text-xl font-semibold mb-4 text-gray-800">เพิ่มข้อมูลจุดสำรวจ</h2>
-                <form id="locationForm" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">ชื่อสถานที่/ตลาด</label>
-                        <input type="text" id="place" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">จังหวัด</label>
-                        <input type="text" id="province" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">ราคา (บาท/กก.)</label>
-                        <input type="number" step="0.01" id="price" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                    </div>
-                    <button type="submit" class="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 font-bold">บันทึกและแสดงบนแผนที่</button>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+                <h2 class="text-xl font-bold mb-4 text-gray-800">สำรวจราคาวันนี้</h2>
+                <form id="priceForm" class="space-y-4">
+                    <input type="text" id="place" placeholder="ชื่อตลาด/สถานที่" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none" required>
+                    <input type="text" id="province" placeholder="จังหวัด" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none" required>
+                    <input type="number" id="price" placeholder="ราคา (บาท/กก.)" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none" required>
+                    <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition">ปักหมุดข้อมูล</button>
                 </form>
             </div>
             <div class="lg:col-span-2">
-                <div id="map" class="shadow-lg border-2 border-white"></div>
+                <div id="map" class="shadow-xl border-4 border-white"></div>
             </div>
         </div>
     </div>
 
     <script>
-        // ข้อมูลเริ่มต้น
-        let backendStatus = "Offline";
+        let studentInfo = "สิธินนท์ | 6604101388";
 
-        // 1. ดึงข้อมูลจาก Express Backend ตามเอกสาร
-        async function fetchApiData() {
+        // 1. ดึงข้อมูลจาก Backend
+        async function loadData() {
             try {
-                // แก้ไข URL ให้ตรงกับ app.get('/api/demo') ใน service.js
-                const response = await fetch('http://localhost:3000/api/demo');
-                const data = await response.json();
-                
-                // นำข้อมูลจาก Backend มาแสดง
-                document.getElementById('developer-info').innerHTML = 
-                    `สถานะระบบ: <span class="text-green-600 font-bold">${data.git.title} & ${data.docker.title}</span>`;
-                
-                backendStatus = "Connected";
-            } catch (error) {
-                console.error("เชื่อมต่อ Backend ไม่ได้:", error);
-                document.getElementById('developer-info').innerHTML = 
-                    `<span class="text-red-600">ไม่สามารถเชื่อมต่อ Backend ได้ (ตรวจสอบ CORS และ Port 3000)</span>`;
+                const [userRes, demoRes] = await Promise.all([
+                    fetch('/api/user'),
+                    fetch('/api/demo')
+                ]);
+                const userData = await userRes.json();
+                const demoData = await demoRes.json();
+
+                studentInfo = `${userData.name} | ${userData.id}`;
+                document.getElementById('dev-tag').innerHTML = `
+                    <p class="text-green-700 font-bold text-lg">${studentInfo}</p>
+                    <p class="text-xs text-blue-500 uppercase tracking-widest">${demoData.docker.title}</p>
+                `;
+            } catch (e) {
+                document.getElementById('dev-tag').innerText = "เชื่อมต่อ Server ไม่ได้";
             }
         }
 
@@ -79,46 +64,23 @@
         const map = L.map('map').setView([18.7883, 98.9853], 8);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-        const greenIcon = new L.Icon({
-            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-            iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41]
-        });
-
-        async function addMarkerToMap(place, province, price) {
-            const query = `${place}, ${province}, Thailand`;
-            try {
-                const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
-                const data = await response.json();
-                if (data.length > 0) {
-                    const marker = L.marker([data[0].lat, data[0].lon], { icon: greenIcon }).addTo(map);
-
-                    // แสดงสถานะที่ได้จาก Backend เหนือหมุด
-                    marker.bindTooltip(`Status: ${backendStatus}`, {
-                        permanent: true, direction: 'top', className: 'custom-label', offset: [0, -35]
-                    }).openTooltip();
-
-                    marker.bindPopup(`<b>${place}</b><br>ราคา: ${price} บาท/กก.`);
-                    map.setView([data[0].lat, data[0].lon], 12);
-                }
-            } catch (e) { console.error(e); }
+        async function addPoint(place, province, price) {
+            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${place},${province}`);
+            const data = await res.json();
+            if (data[0]) {
+                const marker = L.marker([data[0].lat, data[0].lon]).addTo(map);
+                marker.bindTooltip(studentInfo, { permanent: true, direction: 'top', className: 'custom-label' }).openTooltip();
+                marker.bindPopup(`<b>${place}</b><br>ราคา: ${price} บาท`).openPopup();
+                map.setView([data[0].lat, data[0].lon], 10);
+            }
         }
 
-        // 3. จัดการฟอร์ม
-        document.getElementById('locationForm').addEventListener('submit', async (e) => {
+        document.getElementById('priceForm').addEventListener('submit', (e) => {
             e.preventDefault();
-            const place = document.getElementById('place').value;
-            const province = document.getElementById('province').value;
-            const price = document.getElementById('price').value;
-            await addMarkerToMap(place, province, price);
-            e.target.reset();
+            addPoint(document.getElementById('place').value, document.getElementById('province').value, document.getElementById('price').value);
         });
 
-        // 4. เริ่มทำงาน
-        window.onload = async () => {
-            await fetchApiData(); // ดึงข้อมูลจาก Backend ก่อน
-            addMarkerToMap("เชียงใหม่", "เชียงใหม่", "35.50");
-        };
+        window.onload = loadData;
     </script>
 </body>
 </html>
