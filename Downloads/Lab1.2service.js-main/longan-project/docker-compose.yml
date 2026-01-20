@@ -1,0 +1,19 @@
+version: '3.9'
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"  # เชื่อมพอร์ตเครื่องเรากับ Docker
+    volumes:
+      - ./backend/logs:/app/logs # เก็บ log ถาวรแม้ลบ container
+    environment:
+      - PORT=3000
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge # เครือข่ายสำหรับสื่อสารระหว่าง service
