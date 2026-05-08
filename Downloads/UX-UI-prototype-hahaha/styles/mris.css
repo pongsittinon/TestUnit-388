@@ -1,0 +1,219 @@
+/* ============================================================
+   MRIS Design System
+   Multipurpose Reforestation Information System — Mae Chaem
+   ============================================================ */
+
+/* --- Brand Palette --- */
+:root {
+  --mris-brand-950: #0f2515;
+  --mris-brand-900: #19361f;
+  --mris-brand-800: #224a2c;
+  --mris-brand-700: #2b5a35;
+  --mris-brand-600: #356f41;
+  --mris-brand-500: #3f8a56;
+  --mris-brand-300: #9bc4a6;
+  --mris-brand-200: #c9decf;
+  --mris-brand-100: #e5f0e7;
+  --mris-brand-50: #f4f8f4;
+  --ink: #1a1f1a;
+  --paper: #fafaf7;
+}
+
+/* --- Base --- */
+html, body, #root {
+  height: 100%;
+}
+body {
+  font-family: 'Sarabun', sans-serif;
+  background: #f3f5f1;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+.font-mono {
+  font-family: 'Sarabun', monospace;
+}
+
+/* --- Inputs --- */
+.mris-input {
+  width: 100%;
+  background: #f8faf8;
+  border: 1px solid #d7ddd9;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  outline: none;
+  transition: 0.18s;
+}
+.mris-input:focus {
+  border-color: var(--mris-brand-500);
+  box-shadow: 0 0 0 4px rgba(63, 138, 86, 0.14);
+  background: #fff;
+}
+
+/* --- Buttons --- */
+.mris-btn {
+  background: var(--mris-brand-900);
+  color: #fff;
+  border-radius: 0.6rem;
+  padding: 0.55rem 1rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  cursor: pointer;
+}
+.mris-btn:hover {
+  background: var(--mris-brand-800);
+}
+.mris-btn:disabled {
+  background: #cbd5cb;
+  color: #fff;
+  cursor: not-allowed;
+}
+.mris-btn-ghost {
+  background: #fff;
+  color: var(--mris-brand-700);
+  border: 1px solid var(--mris-brand-200);
+}
+.mris-btn-ghost:hover {
+  background: var(--mris-brand-50);
+}
+
+/* --- Chips --- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+.chip-ok {
+  background: var(--mris-brand-50);
+  color: var(--mris-brand-700);
+  border-color: var(--mris-brand-200);
+}
+.chip-warn {
+  background: #fff5e6;
+  color: #a36400;
+  border-color: #ffd99c;
+}
+.chip-err {
+  background: #fdecec;
+  color: #a32626;
+  border-color: #f5c5c5;
+}
+.chip-info {
+  background: #eef3fa;
+  color: #234c7a;
+  border-color: #cfdcee;
+}
+
+/* --- Card --- */
+.card {
+  background: #fff;
+  border: 1px solid #e6e9e3;
+  border-radius: 18px;
+}
+
+/* --- Scrollbar --- */
+.scroll-thin::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.scroll-thin::-webkit-scrollbar-thumb {
+  background: #c8d0c8;
+  border-radius: 8px;
+}
+.scroll-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* --- Leaflet Tweaks --- */
+.leaflet-container {
+  background: #0f1612;
+  font-family: 'Sarabun', sans-serif;
+}
+.leaflet-popup-content-wrapper {
+  border-radius: 14px;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 16px 40px -16px rgba(0, 0, 0, 0.4);
+}
+.leaflet-popup-content {
+  margin: 0;
+  width: 280px !important;
+}
+.leaflet-popup-tip {
+  background: #fff;
+}
+.tree-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+  font-family: 'Sarabun';
+  color: #fff;
+  font-weight: 700;
+  font-size: 10px;
+  transition: transform 0.15s;
+}
+.tree-marker:hover {
+  transform: scale(1.25);
+  z-index: 1000;
+}
+.tree-marker.selected {
+  outline: 3px solid #ffd84d;
+  outline-offset: 2px;
+}
+.row-line {
+  stroke: rgba(255, 255, 255, 0.35);
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+  fill: none;
+  pointer-events: none;
+}
+.lasso-rect {
+  fill: rgba(63, 138, 86, 0.18);
+  stroke: #3f8a56;
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+  pointer-events: none;
+}
+
+/* --- Animations --- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+.anim-in {
+  animation: fadeIn 0.25s ease both;
+}
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(63, 138, 86, 0.55); }
+  70% { box-shadow: 0 0 0 12px rgba(63, 138, 86, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(63, 138, 86, 0); }
+}
+.pulse {
+  animation: pulse-ring 1.6s infinite;
+}
+
+/* --- Tables --- */
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
